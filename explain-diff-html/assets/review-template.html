@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f7f8">
+<title>Diff review · illustrative template</title>
+<!-- Apply the saved/system theme before paint. Generated reviews keep this behavior. -->
+<script>
+try {
+  document.documentElement.dataset.theme = localStorage.getItem('diff-review-theme') ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+} catch (_) {
+  document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --bg:#f5f7f8; --surface:#fff; --surface2:#edf2f4; --text:#172d39;
+  --muted:#465d69; --line:#c6d3da; --accent:#006a61; --accent-bg:#e0f3ee;
+  --warn:#854200; --warn-bg:#fff1db; --good:#17653e; --good-bg:#e4f4e9;
+  --bad:#a42f40; --bad-bg:#ffe7ea; --code:#f0f4f6;
+  --kw:#6338a0; --string:#9b3822; --number:#084fb5; --comment:#536651;
+  --type:#864009; --function:#006477; --property:#264f94; --operator:#754500;
+  --diff-header:#005f8a;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:#111c23; --surface:#172731; --surface2:#203540; --text:#e4eef4;
+  --muted:#b0c4d0; --line:#405864; --accent:#76e0ca; --accent-bg:#183f3a;
+  --warn:#ffd290; --warn-bg:#46321e; --good:#9be3b5; --good-bg:#1b3a2c;
+  --bad:#ffacba; --bad-bg:#432632; --code:#10212b;
+  --kw:#d6b1ff; --string:#ffc1a5; --number:#9ac7ff; --comment:#acc5a6;
+  --type:#ffc58a; --function:#83e2ec; --property:#b2ccff; --operator:#f2d58e;
+  --diff-header:#8dd6ff;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.8 system-ui,-apple-system,'Segoe UI',sans-serif; }
+a { color:var(--accent); text-underline-offset:3px; }
+button,select,input { font:inherit; color:var(--text); background:var(--surface); border:1px solid var(--line); border-radius:7px; padding:7px 12px; }
+button,summary { cursor:pointer; }
+button:hover { background:var(--surface2); }
+button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
+[hidden] { display:none!important; }
+.topbar { position:sticky; top:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:10px 24px; background:var(--surface); border-bottom:1px solid var(--line); }
+.brand { font-size:13px; letter-spacing:.07em; font-weight:700; }
+#theme { white-space:nowrap; flex-shrink:0; }
+.layout { display:grid; grid-template-columns:225px minmax(0,1fr); max-width:1700px; margin:auto; padding:28px 24px; gap:38px; }
+nav { position:sticky; top:80px; align-self:start; max-height:calc(100vh - 90px); overflow:auto; }
+nav a { display:block; padding:6px 0; text-decoration:none; color:var(--muted); font-size:14px; }
+nav a:hover { color:var(--accent); }
+main { min-width:0; }
+h1 { font-size:clamp(28px,4vw,46px); line-height:1.3; letter-spacing:-.035em; margin:12px 0 20px; }
+h2 { font-size:27px; line-height:1.4; margin:0 0 18px; }
+h3 { font-size:20px; margin:24px 0 10px; }
+h4 { font-size:16px; margin:0 0 8px; }
+p { margin:12px 0; }
+p,li,summary { overflow-wrap:anywhere; }
+section { margin:48px 0; scroll-margin-top:85px; }
+.eyebrow { font-size:13px; color:var(--accent); letter-spacing:.1em; font-weight:750; }
+.lead { font-size:19px; color:var(--muted); max-width:1000px; }
+.small { font-size:13px; color:var(--muted); }
+.card,.quiz,.file { margin:20px 0; padding:20px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+.file { scroll-margin-top:85px; }
+.file>summary { font-weight:700; }
+.file-path { font-family:ui-monospace,monospace; font-size:13px; }
+.hunk { margin:16px 0; padding:14px; border:1px solid var(--line); border-radius:10px; scroll-margin-top:85px; }
+.hunk summary,.hunk p { font-size:14px; }
+.tag { font:12px/1.6 ui-monospace,monospace; padding:3px 7px; border-radius:5px; background:var(--surface2); color:var(--muted); }
+.review-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.review-grid>div { padding:12px 16px; border:1px solid var(--line); border-radius:8px; background:var(--surface2); }
+.review-grid p { font-size:14px; }
+.note { margin:18px 0; padding:14px 20px; border-left:4px solid var(--accent); border-radius:0 8px 8px 0; background:var(--accent-bg); }
+.warning { border-color:var(--warn); color:var(--warn); background:var(--warn-bg); }
+.metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+.metric { padding:14px; border:1px solid var(--line); border-radius:9px; background:var(--surface); }
+.metric strong { display:block; font-size:25px; }
+.metric span { font-size:13px; color:var(--muted); }
+.good { color:var(--good); } .bad { color:var(--bad); }
+.flow { display:flex; flex-wrap:wrap; gap:12px; }
+.flow>div { flex:1 1 170px; padding:15px; border:1px solid var(--line); border-radius:9px; background:var(--surface); }
+.flow strong { display:block; color:var(--accent); }
+.tools { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin:16px 0; }
+.tools input { flex:1; min-width:180px; }
+code { padding:2px 5px; background:var(--code); border-radius:4px; font:13px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace; }
+pre { margin:0; padding:10px 0; max-height:650px; overflow:auto; white-space:pre; tab-size:4; background:var(--code); border-radius:0 0 8px 8px; }
+pre code { display:block; padding:0; background:transparent; border-radius:0; font-size:12px; }
+.code-tools { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 10px; background:var(--surface2); font-size:12px; }
+.code-tools button { font-size:12px; padding:3px 8px; }
+/* A newline inside an inline-block is insufficient: every diff span is a block row.
+   Keep line numbers in attributes, not code text, so copying preserves the hunk. */
+.diff-line { display:block; width:max-content; min-width:100%; position:relative; padding-left:100px; }
+.diff-line::before { position:absolute; left:0; width:82px; padding-right:10px; border-right:1px solid var(--line); content:attr(data-old) '  ' attr(data-new); white-space:pre; color:var(--muted); font:11px/1.8 ui-monospace,monospace; text-align:right; }
+.diff-line.add { background:var(--good-bg); border-left:3px solid var(--good); }
+.diff-line.delete { background:var(--bad-bg); border-left:3px solid var(--bad); }
+.diff-line.header { color:var(--diff-header); background:var(--surface2); font-weight:650; }
+.tok-keyword { color:var(--kw); } .tok-string { color:var(--string); }
+.tok-number { color:var(--number); } .tok-comment { color:var(--comment); }
+.tok-type { color:var(--type); } .tok-function { color:var(--function); }
+.tok-property { color:var(--property); } .tok-operator { color:var(--operator); }
+.table-wrap { overflow:auto; }
+table { border-collapse:collapse; width:100%; font-size:14px; line-height:1.6; }
+th,td { padding:11px 13px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line); }
+th { background:var(--surface2); font-size:13px; }
+td:first-child { overflow-wrap:anywhere; }
+fieldset { border:0; padding:0; } legend { font-weight:700; }
+.quiz label { display:block; padding:8px; cursor:pointer; }
+.feedback { padding:12px; border-left:4px solid currentColor; background:var(--surface2); }
+footer { padding:30px 0; font-size:13px; color:var(--muted); }
+@media(max-width:950px) {
+  .layout { display:block; padding:16px; }
+  nav { position:static; max-height:none; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+  nav a { font-size:12px; } .review-grid { grid-template-columns:1fr; }
+  .metrics { grid-template-columns:1fr 1fr; }
+  .topbar { gap:10px; padding:9px 14px; } .brand { font-size:11px; }
+  .file { padding:10px; } .hunk { padding:8px; }
+  .diff-line { padding-left:78px; } .diff-line::before { width:64px; font-size:10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  * { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <span class="brand">CODE REVIEW / ILLUSTRATIVE TEMPLATE</span>
+  <button id="theme" type="button" aria-pressed="false" aria-label="Switch to dark mode">Dark mode</button>
+</header>
+<div class="layout">
+<nav aria-label="Contents">
+  <a href="#scope">Comparison scope</a>
+  <a href="#background">Background</a>
+  <a href="#intuition">Intuition and example</a>
+  <a href="#feature-1">1. Count partial chunks</a>
+  <a href="#evidence">Evidence and limits</a>
+  <a href="#quiz">Understanding check</a>
+  <a href="#inventory">File index / patch</a>
+</nav>
+<main>
+<!-- Replace all illustrative prose, statistics, paths, code, demo, and quiz.
+     Add real feature sections and five real quiz questions; synchronize the nav/index.
+     Keep the component classes/data attributes used by the behavior script below. -->
+<section id="scope">
+  <div class="eyebrow">ILLUSTRATIVE ONLY · COMPLETE SAMPLE DIFF</div>
+  <h1>Count the final partial chunk</h1>
+  <p class="lead">A small fictional change demonstrates this review format. Replace this content with the actual repository snapshot and its behavior.</p>
+  <div class="metrics">
+    <div class="metric"><strong>1</strong><span>file</span></div>
+    <div class="metric"><strong>1</strong><span>complete hunk</span></div>
+    <div class="metric"><strong class="good">+1</strong><span>added line</span></div>
+    <div class="metric"><strong class="bad">−1</strong><span>deleted line</span></div>
+  </div>
+  <div class="note"><strong>Snapshot:</strong> this template has no real Git baseline. In a finished review, identify the repository, base and target commit IDs, working-tree scope, capture date, and exact diff command here.</div>
+  <details><summary>Untracked files and exclusions</summary><p>List actual exclusions here; do not imply that an untracked output is part of the tracked patch.</p></details>
+</section>
+<section id="background">
+  <h2>Background: payload and transfer width</h2>
+  <details><summary>Optional beginner context</summary><p>A payload may require several fixed-width transfers. The last transfer can contain fewer useful bytes while still occupying a transfer slot.</p></details>
+  <p>This fictional function returns the number of chunks needed for a nonnegative payload size and positive chunk width. Those input assumptions are part of the example, not new validation behavior.</p>
+</section>
+<section id="intuition">
+  <h2>Intuition: preserve the partial chunk</h2>
+  <div class="flow">
+    <div><strong>Payload</strong>65 bytes to send</div>
+    <div><strong>Chunk width</strong>64 bytes per transfer</div>
+    <div><strong>Required work</strong>One full chunk and one partial chunk</div>
+  </div>
+  <div class="card">
+    <h3>Try a payload size</h3>
+    <label for="demo-size">Payload bytes: <output id="demo-size-label" for="demo-size">65</output></label>
+    <input id="demo-size" type="range" min="0" max="192" value="65">
+    <div class="review-grid">
+      <div><h4>Before</h4><output id="demo-before">1 chunk</output></div>
+      <div><h4>After</h4><output id="demo-after">2 chunks</output></div>
+    </div>
+    <p id="demo-note" role="status"></p>
+    <p class="small">Illustrative arithmetic, with a fixed 64-byte width. This is not a measured runtime or hardware simulation.</p>
+  </div>
+</section>
+<section id="code-controls">
+  <h2>Complete code review</h2>
+  <div class="tools">
+    <label for="filter">Find a file or explanation</label>
+    <input id="filter" type="search" placeholder="Path, feature, or behavior">
+    <button id="expand" type="button">Expand results</button>
+    <button id="collapse" type="button">Collapse all</button>
+    <button class="download" type="button">Download patch</button>
+  </div>
+  <p id="filter-status" role="status">1 / 1 files</p>
+  <p class="small">Line-number columns show base / target positions. Copying a hunk preserves its original text and omits decorative numbers. Long hunks scroll internally; they are not truncated.</p>
+</section>
+<section id="feature-1" class="feature">
+  <div class="eyebrow">FEATURE 1 · 1 FILE · 1 HUNK</div>
+  <h2>Count partial chunks</h2>
+  <p class="lead">Round up the division so a remaining payload fragment is included. Exact multiples and an empty payload keep the same result.</p>
+  <details class="file" id="file-1" data-search="sample/chunks.py count partial chunks ceiling division">
+    <summary><span class="tag">Modified · +1 −1 · 1 hunk</span><br><span class="file-path">sample/chunks.py</span><br>Include the final partial transfer</summary>
+    <div class="review-grid">
+      <div><h4>Before · example base</h4><p>Floor division drops the remainder: 65 bytes at width 64 returns one chunk.</p></div>
+      <div><h4>After · example target</h4><p>Ceiling division returns two chunks. No extra chunk is added for exact multiples.</p></div>
+    </div>
+    <div class="note"><strong>Review focus:</strong> distinguish the payload size from its transfer count. This formula assumes nonnegative size and positive width.</div>
+    <details class="hunk" id="file-1-h1">
+      <summary><span class="tag">1/1 · +1 −1</span> chunks: round up division<br><span class="small">Old 1–2 / New 1–2</span></summary>
+      <p>The only behavioral change is the numerator adjustment before integer division. The function's signature and callers are unchanged in this illustrative patch.</p>
+      <div class="code-tools"><span>Base line / target line</span><button class="copy" type="button" data-copy="file-1-h1-code" aria-label="Copy sample/chunks.py hunk 1">Copy hunk</button></div>
+      <!-- No formatter whitespace between line spans: code.textContent is the exact hunk.
+           Escape source, then apply language tokens from matching complete old/new files. -->
+      <pre><code id="file-1-h1-code" class="language-diff"><span class="diff-line header">@@ -1,2 +1,2 @@
+</span><span class="diff-line context" data-old="1" data-new="1"> <span class="tok-keyword">def</span> <span class="tok-function">chunks</span><span class="tok-operator">(</span>size<span class="tok-operator">,</span> width<span class="tok-operator">):</span>
+</span><span class="diff-line delete" data-old="2" data-new="">-    <span class="tok-keyword">return</span> size <span class="tok-operator">//</span> width
+</span><span class="diff-line add" data-old="" data-new="2">+    <span class="tok-keyword">return</span> <span class="tok-operator">(</span>size <span class="tok-operator">+</span> width <span class="tok-operator">-</span> <span class="tok-number">1</span><span class="tok-operator">)</span> <span class="tok-operator">//</span> width
+</span></code></pre>
+    </details>
+  </details>
+</section>
+<section id="evidence">
+  <h2>Evidence and limits</h2>
+  <div class="note warning">This sample contains no regression, synthesis, or benchmark evidence. In the generated review, report the actual checks and identify historical evidence explicitly.</div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Observation</th><th>Baseline</th><th>Target</th><th>Meaning and limits</th></tr></thead>
+    <tbody><tr><td>Illustrative 65-byte input</td><td>1 chunk</td><td>2 chunks</td><td>Arithmetic example, not a performance result.</td></tr></tbody>
+  </table></div>
+</section>
+<section id="quiz">
+  <h2>Check your understanding</h2>
+  <p>This starter includes one example question. A finished review supplies five questions about the real change; this section remains skippable.</p>
+  <div class="quiz" data-answer="1" data-feedback="Exact multiples have no partial chunk. Both versions return two for 128 bytes at width 64; the new expression changes cases with a remainder.">
+    <fieldset>
+      <legend>For a payload of 128 bytes and width 64, which result changes?</legend>
+      <label><input type="radio" name="q0" value="0"> The new version returns three chunks.</label>
+      <label><input type="radio" name="q0" value="1"> Neither; both versions return two chunks.</label>
+      <label><input type="radio" name="q0" value="2"> The old version returns one chunk.</label>
+    </fieldset>
+    <div class="feedback" hidden role="status"></div>
+  </div>
+</section>
+<section id="inventory">
+  <h2>Complete file index</h2>
+  <p>Each inventory entry reveals the corresponding file, even when hidden by a previous search.</p>
+  <button class="download" type="button">Download exact patch</button>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Repository-relative path</th><th>Feature</th><th>Added / deleted</th><th>Hunks</th></tr></thead>
+    <tbody><tr><td><a class="file-link" href="#file-1">sample/chunks.py</a></td><td>1</td><td>+1 / −1</td><td>1</td></tr></tbody>
+  </table></div>
+</section>
+<footer>Self-contained review template · no external fonts, scripts, or network dependencies.</footer>
+</main>
+</div>
+<!-- Embed the original patch as a JSON string. Escape '<' as '\u003c' when generating
+     this block, so source containing a closing script tag cannot end the element. -->
+<script type="application/json" id="patch-data" data-filename="illustrative-review.patch">"diff --git a/sample/chunks.py b/sample/chunks.py\n--- a/sample/chunks.py\n+++ b/sample/chunks.py\n@@ -1,2 +1,2 @@\n def chunks(size, width):\n-    return size // width\n+    return (size + width - 1) // width\n"</script>
+<script>
+const root = document.documentElement;
+const themeButton = document.querySelector('#theme');
+const media = matchMedia('(prefers-color-scheme: dark)');
+// Called at startup, by the toggle, and by system preference changes. Persists only
+// explicit choices; updates all browser-facing theme state without reloading.
+const applyTheme = (mode, save = false) => {
+  root.dataset.theme = mode;
+  root.style.colorScheme = mode;
+  themeButton.setAttribute('aria-pressed', String(mode === 'dark'));
+  themeButton.textContent = mode === 'dark' ? 'Light mode' : 'Dark mode';
+  themeButton.setAttribute('aria-label', mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  document.querySelector('meta[name="theme-color"]').content = getComputedStyle(root).getPropertyValue('--bg').trim();
+  if (save) { try { localStorage.setItem('diff-review-theme', mode); } catch (_) {} }
+};
+applyTheme(root.dataset.theme);
+themeButton.addEventListener('click', () => applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark', true));
+media.addEventListener('change', () => {
+  let saved;
+  try { saved = localStorage.getItem('diff-review-theme'); } catch (_) {}
+  if (!saved) applyTheme(media.matches ? 'dark' : 'light');
+});
+
+const files = [...document.querySelectorAll('details.file')];
+const search = document.querySelector('#filter');
+// The search input and deep-link navigation use the same visibility/count update.
+const filterFiles = () => {
+  const query = search.value.trim().toLowerCase();
+  let visible = 0;
+  files.forEach(file => {
+    file.hidden = !file.dataset.search.toLowerCase().includes(query);
+    if (!file.hidden) visible++;
+  });
+  document.querySelector('#filter-status').textContent = `${visible} / ${files.length} files`;
+};
+search.addEventListener('input', filterFiles);
+filterFiles();
+document.querySelector('#expand').addEventListener('click', () => {
+  files.filter(file => !file.hidden).forEach(file => {
+    file.open = true;
+    file.querySelectorAll('details.hunk').forEach(hunk => { hunk.open = true; });
+  });
+});
+document.querySelector('#collapse').addEventListener('click', () => {
+  document.querySelectorAll('details.file, details.hunk').forEach(item => { item.open = false; });
+});
+// Open nested disclosures and clear a conflicting search before scrolling. Used for
+// initial URLs, hash changes, and repeated clicks on an already-selected file link.
+const revealTarget = () => {
+  const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (!target) return;
+  if (target.closest('details.file')) { search.value = ''; filterFiles(); }
+  let parent = target;
+  while (parent) {
+    if (parent.matches('details')) parent.open = true;
+    parent = parent.parentElement;
+  }
+  target.scrollIntoView({block:'start'});
+};
+window.addEventListener('hashchange', revealTarget);
+document.querySelectorAll('.file-link').forEach(link => link.addEventListener('click', event => {
+  event.preventDefault();
+  history.replaceState(null, '', link.getAttribute('href'));
+  revealTarget();
+}));
+revealTarget();
+
+document.querySelectorAll('.copy').forEach(button => button.addEventListener('click', async () => {
+  const code = document.getElementById(button.dataset.copy);
+  try {
+    await navigator.clipboard.writeText(code.textContent);
+    button.textContent = 'Copied';
+  } catch (_) {
+    const range = document.createRange();
+    range.selectNodeContents(code);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    button.textContent = 'Selected — copy manually';
+  }
+}));
+document.querySelectorAll('.download').forEach(button => button.addEventListener('click', () => {
+  const data = document.querySelector('#patch-data');
+  const blob = new Blob([JSON.parse(data.textContent)], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = data.dataset.filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}));
+
+// Illustrative component only: replace its inputs/calculation and explanation with
+// the real change's concept, or remove the component when interaction adds no value.
+const updateDemo = () => {
+  const size = Number(document.querySelector('#demo-size').value);
+  const before = Math.floor(size / 64), after = Math.ceil(size / 64);
+  document.querySelector('#demo-size-label').textContent = size;
+  document.querySelector('#demo-before').textContent = `${before} chunk(s)`;
+  document.querySelector('#demo-after').textContent = `${after} chunk(s)`;
+  document.querySelector('#demo-note').textContent = before === after ?
+    'No partial chunk: the result stays the same.' : 'The remainder requires one additional chunk.';
+};
+document.querySelector('#demo-size').addEventListener('input', updateDemo);
+updateDemo();
+document.querySelectorAll('.quiz').forEach(quiz => quiz.addEventListener('change', event => {
+  const correct = Number(event.target.value) === Number(quiz.dataset.answer);
+  const feedback = quiz.querySelector('.feedback');
+  feedback.hidden = false;
+  feedback.className = 'feedback ' + (correct ? 'good' : 'bad');
+  feedback.textContent = (correct ? 'Correct. ' : 'Try again. ') + quiz.dataset.feedback;
+}));
+</script>
+</body>
+</html>
